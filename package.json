@@ -1,0 +1,38 @@
+{
+  "name": "hertz-frequency-studio",
+  "private": false,
+  "version": "0.1.0",
+  "type": "module",
+  "license": "MIT",
+  "description": "Hertz — free and open-source, layered frequency and interval generator with QR presets",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "test": "node --test tests/engine.test.mjs && vitest run tests/presets.test.ts",
+    "test:engine": "node --test tests/engine.test.mjs",
+    "android:add": "npm run build && npx cap add android",
+    "android:sync": "npm run build && npx cap sync android",
+    "android:apk": "npm run android:sync && cd android && ./gradlew assembleDebug"
+  },
+  "dependencies": {
+    "lucide-react": "^0.468.0",
+    "qrcode": "^1.5.4",
+    "jsqr": "^1.4.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "@capacitor/core": "7.6.10",
+    "@capacitor/android": "7.6.10"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "@types/qrcode": "^1.5.5",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "@vitejs/plugin-react": "^4.5.0",
+    "typescript": "^5.8.0",
+    "vite": "^6.3.0",
+    "vitest": "^3.2.0",
+    "@capacitor/cli": "7.6.10"
+  }
+}
