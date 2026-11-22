@@ -3,6 +3,12 @@ import { sanitizeStudio, type Studio } from './model';
 /** Versioned portable preset payload. Gzip is supported in Chromium, Firefox and Safari. */
 const prefix = 'HZ2:';
 
+function toBlob(bytes: Uint8Array): Blob {
+  // Explicit ArrayBuffer copy keeps TypeScript strict BlobPart types safe.
+  const copy = new Uint8Array(new ArrayBuffer(bytes.byteLength));
+  copy.set(bytes);
+  return new Blob([copy.buffer]);
+}
 function toBase64Url(bytes: Uint8Array): string {
   let binary = '';
   for (let i = 0; i < bytes.length; i += 8192) {
@@ -21,7 +27,7 @@ export async function encodePreset(studio: Studio): Promise<string> {
   if (typeof CompressionStream === 'undefined') {
     return 'J' + toBase64Url(bytes);
   }
-  const stream = new Blob([bytes]).stream().pipeThrough(new CompressionStream('gzip'));
+  const stream = toBlob(bytes).stream().pipeThrough(new CompressionStream('gzip'));
   const buffer = await new Response(stream).arrayBuffer();
   return 'G' + toBase64Url(new Uint8Array(buffer));
 }
@@ -32,7 +38,7 @@ export async function decodePreset(encoded: string): Promise<Studio> {
   let data: Uint8Array = bytes;
   if (kind === 'G') {
     if (typeof DecompressionStream === 'undefined') throw new Error('Compressed QR codes need a modern browser.');
-    const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
+    const stream = toBlob(bytes).stream().pipeThrough(new DecompressionStream('gzip'));
     const buffer = await new Response(stream).arrayBuffer();
     if (buffer.byteLength > 5_000_000) throw new Error('Decompressed preset is too large.');
     data = new Uint8Array(buffer);
