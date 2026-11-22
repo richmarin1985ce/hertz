@@ -9,10 +9,6 @@ on:
 permissions:
   contents: read
 
-concurrency:
-  group: hertz-android-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
   android-apk:
     name: Test, compile and package Android APK
